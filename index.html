@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Run Python on GitHub Pages</title>
+    https://pyscript.net/latest/pyscript.css
+    <script defer src="httpsest/pyscript.js</script>
+</head>
+<body>
+    <h1>Python Output on GitHub Pages</h1>
+    <py-script>
+        import random
+        from turtle import Turtle, Screen
+  
+        is_race_on = False
+        screen = Screen()
+        screen.setup(width=500, height=400)
+        user_bet = screen.textinput(title="Make your bet", prompt="Which turtle will win the race? Enter a color: ")
+        colors = ["red", "orange", "yellow", "green", "blue", "purple"]
+        y_positions = [-100, -60, -20, 20, 60, 100]
+        all_turtles = []
+        
+        for i in range(0, 6):
+            new_turtle = Turtle(shape="turtle")
+            new_turtle.color(colors[i])
+            new_turtle.penup()
+            new_turtle.goto(x=-230, y=y_positions[i])
+            all_turtles.append(new_turtle)
+        
+        if user_bet:
+            is_race_on = True
+        
+        while is_race_on:
+            rand_distance = random.randint(0, 10)
+            turt = random.choice(all_turtles)
+            if turt.xcor() > 230:
+                is_race_on = False
+                win_color = turt.pencolor()
+                if win_color == user_bet:
+                    print(f"You've won! The {win_color} turtle is the winner!")
+                else:
+                    print(f"You've lost! The {win_color} turtle is the winner!")
+            turt.forward(rand_distance)
+        screen.exitonclick()
+        name = "Kanha"
+        print(f"Hello {name}, this is Python running on GitHub Pages!")
+    </py-script>
+</body>
+</html>
