@@ -2,48 +2,78 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Run Python on GitHub Pages</title>
-    https://pyscript.net/latest/pyscript.css
-    <script defer src="httpsest/pyscript.js</script>
+    <title>Turtle Race on GitHub Pages</title>
+    <link rel="stylesheet" href="https://pss
+    https://pyscript.net/latest/pyscript.js</script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f8ff;
+        }
+        canvas {
+            border: 2px solid #333;
+            background: #fff;
+            display: block;
+            margin: 20px auto;
+        }
+        #controls {
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Python Output on GitHub Pages</h1>
+    <h1>Turtle Race Game</h1>
+    <div id="controls">
+        <label for="bet">Enter your bet (red, orange, yellow, green, blue, purple): </label>
+        <input type="text" id="bet" />
+        <button id="startRace">Start Race</button>
+    </div>
+    <canvas id="raceCanvas" width="500" height="400"></canvas>
+
     <py-script>
-        import random
-        from turtle import Turtle, Screen
-  
-        is_race_on = False
-        screen = Screen()
-        screen.setup(width=500, height=400)
-        user_bet = screen.textinput(title="Make your bet", prompt="Which turtle will win the race? Enter a color: ")
-        colors = ["red", "orange", "yellow", "green", "blue", "purple"]
-        y_positions = [-100, -60, -20, 20, 60, 100]
-        all_turtles = []
-        
-        for i in range(0, 6):
-            new_turtle = Turtle(shape="turtle")
-            new_turtle.color(colors[i])
-            new_turtle.penup()
-            new_turtle.goto(x=-230, y=y_positions[i])
-            all_turtles.append(new_turtle)
-        
-        if user_bet:
-            is_race_on = True
-        
-        while is_race_on:
-            rand_distance = random.randint(0, 10)
-            turt = random.choice(all_turtles)
-            if turt.xcor() > 230:
-                is_race_on = False
-                win_color = turt.pencolor()
-                if win_color == user_bet:
-                    print(f"You've won! The {win_color} turtle is the winner!")
-                else:
-                    print(f"You've lost! The {win_color} turtle is the winner!")
-            turt.forward(rand_distance)
-        screen.exitonclick()
-        name = "Kanha"
-        print(f"Hello {name}, this is Python running on GitHub Pages!")
+from js import document
+import asyncio, random
+
+canvas = document.getElementById("raceCanvas")
+ctx = canvas.getContext("2d")
+
+colors = ["red", "orange", "yellow", "green", "blue", "purple"]
+y_positions = [50, 100, 150, 200, 250, 300]
+x_positions = [-230] * 6
+finish_line = 450
+
+def draw_turtles():
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.beginPath()
+    ctx.moveTo(finish_line, 0)
+    ctx.lineTo(finish_line, canvas.height)
+    ctx.strokeStyle = "black"
+    ctx.stroke()
+    for i, color in enumerate(colors):
+        ctx.beginPath()
+        ctx.arc(x_positions[i]+250, y_positions[i], 20, 0, 3.14*2)
+        ctx.fillStyle = color
+        ctx.fill()
+
+async def start_race():
+    user_bet = document.getElementById("bet").value.strip().lower()
+    race_on = True
+    while race_on:
+        await asyncio.sleep(0.05)
+        for i in range(6):
+            x_positions[i] += random.randint(0, 10)
+            if x_positions[i]+250 >= finish_line:
+                race_on = False
+                winner = colors[i]
+                result = f"You {'won' if winner == user_bet else 'lost'}! The {winner} turtle is the winner!"
+                document.body.insertAdjacentHTML("beforeend", f"<h2>{result}</h2>")
+                break
+        draw_turtles()
+
+draw_turtles()
+start_button = document.getElementById("startRace")
+start_button.addEventListener("click", lambda e: asyncio.ensure_future(start_race()))
     </py-script>
 </body>
 </html>
